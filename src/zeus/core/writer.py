@@ -41,6 +41,29 @@ def write(records: Iterable[dict[str, Any]], out: Path, fmt: str, table: str = "
     return out
 
 
+def write_tables(
+    tables: dict[str, list[dict[str, Any]]], out_dir: Path, fmt: str, db_name: str = "raw"
+) -> list[Path]:
+    """Write a set of related raw tables.
+
+    - json/jsonl/csv → one file per table under ``out_dir``
+    - sqlite         → a single ``<db_name>.db`` containing every table,
+                       which is the friendliest shape for downstream ETL/ELT.
+    """
+    out_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    if fmt == "sqlite":
+        db = out_dir / f"{db_name}.db"
+        db.unlink(missing_ok=True)
+        for name, records in tables.items():
+            _write_sqlite(records, db, name)
+        written.append(db)
+    else:
+        for name, records in tables.items():
+            written.append(write(records, out_dir / f"{name}.{fmt}", fmt, table=name))
+    return written
+
+
 def _flat(v: Any) -> Any:
     """CSV cells can't hold nested structures — serialize them."""
     return json.dumps(v, default=str) if isinstance(v, (dict, list)) else v

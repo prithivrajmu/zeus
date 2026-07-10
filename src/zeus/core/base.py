@@ -47,10 +47,26 @@ class BaseGenerator(abc.ABC):
         if config.seed is not None:
             self.faker.seed_instance(config.seed)
 
-    @abc.abstractmethod
     def generate(self) -> Iterator[dict[str, Any]]:
-        """Yield ``config.count`` records as plain dicts."""
-        raise NotImplementedError
+        """Yield records for single-table use cases.
+
+        Multi-table generators should override :meth:`generate_tables`
+        instead and may leave this unimplemented.
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} implements generate_tables(); "
+            "call that instead of generate()."
+        )
+
+    def generate_tables(self) -> dict[str, list[dict[str, Any]]]:
+        """Return ``{table_name: [records]}``.
+
+        Default wraps :meth:`generate` as a single table named after the
+        generator. Raw-source use cases (multiple related tables destined
+        for an ETL/ELT pipeline) override this to emit several tables with
+        consistent foreign keys.
+        """
+        return {self.name: list(self.generate())}
 
     # Convenience -----------------------------------------------------------
 
