@@ -1,3 +1,4 @@
+import zeus.generators  # noqa: F401  — triggers registration
 from zeus.core import GeneratorConfig, get
 
 
