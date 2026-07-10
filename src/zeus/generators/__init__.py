@@ -3,6 +3,4 @@
 Add each new use case as a module here and import it below.
 """
 
-from . import example  # noqa: F401
-
-# TODO: replace `example` with the two real use-case generators.
+from . import ecommerce_orders, example, support_tickets  # noqa: F401
