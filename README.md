@@ -28,6 +28,15 @@ zeus generate pharma_sales -n 20000 -o months=48            # 4 years of history
 zeus generate pharma_sales -n 20000 -o clean=true           # no messy rows
 ```
 
+## UI
+
+A Streamlit form over the same generation path as the CLI — pick a use case, set count/seed/format and per-use-case options, and generate/preview/download from the browser:
+
+```bash
+pip install -e ".[ui]"
+zeus ui                 # → http://127.0.0.1:8501
+```
+
 ## Adding a New Use Case
 
 1. Copy `src/zeus/generators/example.py` (single-table) or model on `patient_history.py` (multi-table raw sources)
@@ -43,15 +52,17 @@ Use `self.faker` (realistic values), `self.rng` (seeded randomness), and `self.o
 zeus/
 ├── pyproject.toml
 ├── src/zeus/
-│   ├── cli.py               # typer CLI: list / generate
+│   ├── cli.py               # typer CLI: list / generate / ui
 │   ├── core/
 │   │   ├── base.py          # BaseGenerator + GeneratorConfig
 │   │   ├── registry.py      # @register plugin registry
 │   │   └── writer.py        # json / jsonl / csv / sqlite writers
-│   └── generators/          # ← one module per use case
-│       ├── example.py           # single-table template
-│       ├── patient_history.py   # use case 1: US insurance raw tables
-│       └── pharma_sales.py      # use case 2: global pharma sales raw tables
+│   ├── generators/          # ← one module per use case
+│   │   ├── example.py           # single-table template
+│   │   ├── patient_history.py   # use case 1: US insurance raw tables
+│   │   └── pharma_sales.py      # use case 2: global pharma sales raw tables
+│   └── ui/
+│       └── app.py           # Streamlit form (`zeus ui`, optional [ui] extra)
 ├── tests/
 └── output/                  # generated datasets (gitignored)
 ```

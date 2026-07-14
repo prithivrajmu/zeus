@@ -60,5 +60,29 @@ def generate(
     typer.echo(f"✓ {use_case}: {len(tables)} table(s) → {paths[0].parent if fmt != 'sqlite' else paths[0]}")
 
 
+@app.command()
+def ui(
+    port: int = typer.Option(8501, "--port", help="Port to serve the UI on"),
+    host: str = typer.Option("127.0.0.1", "--host", help="Host to bind the UI to"),
+) -> None:
+    """Launch the Streamlit UI for interactive data generation."""
+    try:
+        import streamlit  # noqa: F401
+    except ImportError:
+        typer.echo("Streamlit isn't installed. Run: pip install 'zeus[ui]'")
+        raise typer.Exit(1)
+
+    import subprocess
+    import sys
+
+    app_path = Path(__file__).parent / "ui" / "app.py"
+    subprocess.run(
+        [
+            sys.executable, "-m", "streamlit", "run", str(app_path),
+            "--server.port", str(port), "--server.address", host,
+        ]
+    )
+
+
 if __name__ == "__main__":
     app()
