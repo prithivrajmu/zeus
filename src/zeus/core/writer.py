@@ -1,6 +1,6 @@
 """Output writers.
 
-zaia (the MCP server) will read these artifacts, so formats are kept simple
+maia (the MCP server) will read these artifacts, so formats are kept simple
 and self-describing: json, jsonl, csv, and sqlite.
 """
 
