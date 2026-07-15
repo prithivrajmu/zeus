@@ -22,3 +22,8 @@ zeus = "zeus.cli:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/zeus"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]

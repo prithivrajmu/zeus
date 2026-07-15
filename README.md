@@ -8,24 +8,26 @@ Build 1 of the Hermes stack: a **pluggable synthetic data generator** producing 
 
 **`pharma_sales`** — pharma brand sales across countries. Five raw tables: `raw_products` (brands, molecules, therapeutic areas, launch/patent years), `raw_countries`, `raw_distributors`, `raw_fx_rates` (monthly currency→USD), `raw_sales` (monthly sell-in **in local currency** — FX normalization is deliberately left to the pipeline). `--count` = number of sales transactions. Built-in seasonality, no pre-launch sales, loss-of-exclusivity decay.
 
-**ETL bait:** both use cases inject ~1% messy rows (negative amounts, case drift, trailing spaces in country codes) so the pipeline has real cleaning work. Disable with `-o clean=true`.
+Both use cases inject ~1% messy rows (negative amounts, case drift, trailing spaces in country codes). Disable with `-o clean=true`.
 
 ## Install
 
+Requires [uv](https://docs.astral.sh/uv/).
+
 ```bash
 cd zeus
-pip install -e .
+uv sync
 ```
 
 ## Usage
 
 ```bash
-zeus list
-zeus generate patient_history -n 500 --seed 42 -f sqlite    # → output/patient_history/patient_history.db (6 tables)
-zeus generate patient_history -n 500 -f csv                 # → output/patient_history/*.csv
-zeus generate pharma_sales -n 20000 --seed 42 -f sqlite     # → output/pharma_sales/pharma_sales.db (5 tables)
-zeus generate pharma_sales -n 20000 -o months=48            # 4 years of history
-zeus generate pharma_sales -n 20000 -o clean=true           # no messy rows
+uv run zeus list
+uv run zeus generate patient_history -n 500 --seed 42 -f sqlite    # → output/patient_history/patient_history.db (6 tables)
+uv run zeus generate patient_history -n 500 -f csv                 # → output/patient_history/*.csv
+uv run zeus generate pharma_sales -n 20000 --seed 42 -f sqlite     # → output/pharma_sales/pharma_sales.db (5 tables)
+uv run zeus generate pharma_sales -n 20000 -o months=48            # 4 years of history
+uv run zeus generate pharma_sales -n 20000 -o clean=true           # no messy rows
 ```
 
 ## UI
@@ -33,8 +35,8 @@ zeus generate pharma_sales -n 20000 -o clean=true           # no messy rows
 A Streamlit form over the same generation path as the CLI — pick a use case, set count/seed/format and per-use-case options, and generate/preview/download from the browser:
 
 ```bash
-pip install -e ".[ui]"
-zeus ui                 # → http://127.0.0.1:8501
+uv sync --extra ui
+uv run zeus ui           # → http://127.0.0.1:8501
 ```
 
 ## Adding a New Use Case
